@@ -1,0 +1,105 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+<body>
+    <h3>Название: <label id="nameLabel"></label></h3>
+    <h3>Автор: <a id="authorRef"></a></h3>
+    <!--Рейтинг-->
+    <h3>Рейтинг: <label id="ratingLabel"></label></h3>
+    Описание: <label id="descriptionLabel"></label>
+    <!--Работа для скачивания, если присутствует-->
+    <h3><a id="workDownload">Работа</a></h3>
+    <h3>Дата создания: <label id="dateLabel"></label></h3>
+    <button id="deleteButton">Удалить Портфолио</button>
+    <!--Оставить комментарий-->
+    <input id="commentaryInput">
+    <button id="savecommentButton">Оставить комментарий</button>
+    <!--Комментарии-->
+    <div id="commentariesDiv">
+        
+    </div>
+
+    <script>
+        const nameLabel = document.getElementById("nameLabel");
+        const authorRef = document.getElementById("authorRef");
+        const ratingLabel = document.getElementById("ratingLabel");
+        const descriptionLabel = document.getElementById("descriptionLabel");
+        const workDownload = document.getElementById("workDownload");
+        const dateLabel = document.getElementById("dateLabel");
+        const deleteButton = document.getElementById("deleteButton");
+        const commentaryInput = document.getElementById("commentaryInput");
+        const savecommentButton = document.getElementById("savecommentButton");
+        const commentariesDiv = document.getElementById("commentariesDiv");
+        const username = location.pathname.split("/")[1];
+        const portfolio = location.pathname.split("/")[2];
+
+        window.onload = (async () => {
+            const prom = await fetch(portfolio + "/getinformation", {
+                method: "GET"
+            });
+
+            const data = await prom.json();
+            nameLabel.innerHTML = portfolio;
+            authorRef.innerHTML = username;
+            authorRef.href = "../" + username;
+            ratingLabel.innerHTML = data.rating;
+            descriptionLabel.innerHTML = data.description;
+            dateLabel.innerHTML = data.creationDate;
+            workDownload.setAttribute("href", data.workFile);
+            workDownload.setAttribute("download", username + "_" + portfolio);
+            for (let comment of data.commentaries) {
+                const block = document.createElement("div");
+                block.style = "border: solid;";
+                const user = document.createElement("a");
+                user.style = "font-size: 25px;";
+                user.innerHTML = comment.authorName;
+                user.setAttribute("href", "../" + comment.authorName)
+                block.appendChild(user);
+                const br = document.createElement("br");
+                block.appendChild(br);
+                const text = document.createElement("label");
+                text.innerHTML = comment.text;
+                block.appendChild(text);
+                const creationDate = document.createElement("h3");
+                creationDate.innerHTML = comment.creationDate;
+                block.appendChild(creationDate);
+                if (comment.isOwner) {
+                    const deletecomButton = document.createElement("button");
+                    deletecomButton.innerHTML = "Удалить";
+                    deletecomButton.onclick = (async () => {
+                        await fetch(portfolio + "/" + comment.id + "/delete", {
+                            method: "GET"
+                        });
+
+                        window.location.reload;
+                    })
+
+                    block.appendChild(deletecomButton);
+                }
+
+                commentariesDiv.appendChild(block);
+            }
+        });
+
+        deleteButton.onclick = (async () => {
+            await fetch(portfolio + "/delete", {
+                method: "GET"
+            });
+
+            window.location.href = "/" + username;
+        });
+
+        savecommentButton.onclick = (async () => {
+            await fetch(portfolio + "/comment", {
+                method: "POST",
+                body: commentaryInput.value
+            });
+
+            location.reload();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,63 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+<body>
+    <h3>Имя пользователя: <label id="usernameLabel"></label></h3>
+    <img id="photoImg" alt="Аватар" style="vertical-align: middle; width: 150px; height: 150px; border-radius: 50%;">
+    <br>
+    Описание: <label id="descriptionLabel"></label>
+    <br>
+    <h3>Почта: <label id="emailLabel"></label></h3>
+    <h3>Дата создания: <label id="creationdateLabel"></label></h3>
+    <br>
+    <!--Список портфолио со ссылкой на само портфолио-->
+    <div id="portfoliosDiv">
+
+    </div>
+
+    <script>
+        const usernameLabel = document.getElementById("usernameLabel");
+        const photoImg = document.getElementById("photoImg");
+        const descriptionLabel = document.getElementById("descriptionLabel");
+        const emailLabel = document.getElementById("emailLabel");
+        const creationdateLabel = document.getElementById("creationdateLabel");
+        const portfoliosDiv = document.getElementById("portfoliosDiv");
+        const username = location.pathname;
+
+        window.onload = (async () => {
+            const prom = await fetch(username + "/getinformation", {
+                method: "GET"
+            });
+
+            const data = await prom.json();
+            usernameLabel.innerHTML = data.username;
+            descriptionLabel.innerHTML = data.description;
+            emailLabel.innerHTML = data.email;
+            creationdateLabel.innerHTML = data.date;
+            if (data.avatar != null)
+                photoImg.setAttribute("src", "data:image/jpeg;base64," + data.avatar);
+            for (let portfolio of data.portfolios) {
+                const block = document.createElement("div");
+                block.style = "border: solid;";
+                const portfolioName = document.createElement("a");
+                portfolioName.style = "font-size: 25px;";
+                portfolioName.innerHTML = portfolio.portfolioName;
+                portfolioName.setAttribute("href", username + "/" + portfolio.portfolioName)
+                block.appendChild(portfolioName);
+                const br = document.createElement("br");
+                block.appendChild(br);
+                const description = document.createElement("label");
+                description.innerHTML = portfolio.description;
+                block.appendChild(description);
+                const creationDate = document.createElement("h3");
+                creationDate.innerHTML = portfolio.creationDate;
+                block.appendChild(creationDate);
+                portfoliosDiv.appendChild(block);
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Digital Portfolio</title>
+</head>
+<body>
+    <div style="width: 65%; float: left;">
+        <h1 id="xd">Поиск</h1>
+        <input type="search" id="searchInput" style="width: 90%;">
+        <button id="searchButton">Найти</button>
+    </div>
+    <div style="float: right; width:35%;">
+        <a style="font-size: 50px;">Профиль</a>
+        <br><br>
+        <button id="registrationButton">Регистрация</button>
+        <button id="signinButton">Войти</button>
+    </div>
+
+    <script>
+        const searchInput = document.getElementById("searchInput");
+
+        document.getElementById("registrationButton").onclick = (() => window.location = "registration");
+        document.getElementById("signinButton").onclick = (() => window.location = "signing");
+        document.getElementById("searchButton").onclick = (() => {
+            window.location.href = "search?name=" + searchInput.value + "&type=user";
+        });
+    </script>
+</body>
+</html>
