@@ -1,0 +1,72 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+<body style="background-color: #1e003d;">
+    <div style="position:absolute; border: 2px solid white; height: auto; width: 80%; margin: 75px;">
+        <button style="float: right; color: white; background-color: #7209de; font-size: 20px;" id="onMainButton">На главную</button>
+        <div style="text-align: center; float: left; width: 250px; height: 250px; margin: 30px;">
+            <img id="photoImg" style="height: 100%; width: 100%;">
+        </div>
+        <div style="float: left; margin: 30px;">
+            <label id="usernameLabel" style="color: white; font-size: 20px;"></label>
+            <br><br>
+            <label id="emailLabel" style="color: white; font-size: 20px;"></label>
+            <h3 style="color: white; font-size: 20px;">Дата создания: <label id="creationdateLabel"></label></h3>
+        </div>
+        <div style="margin: 10px; float: left; width: 95%;">
+            <textarea id="descriptionInput" rows="15" type="text" hidden style="width: 100%; background: transparent; border: 2px solid white; font-size: 20px; color: white; resize: none;"></textarea>
+            <label id="descriptionLabel" style="color: white; font-size: 20px; white-space: pre-wrap;"></label>
+            <br><br>
+            <div id="portfoliosDiv">
+            </div>
+        </div>
+    </div>
+
+        <script>
+            const usernameLabel = document.getElementById("usernameLabel");
+            const photoImg = document.getElementById("photoImg");
+            const descriptionLabel = document.getElementById("descriptionLabel");
+            const emailLabel = document.getElementById("emailLabel");
+            const creationdateLabel = document.getElementById("creationdateLabel");
+            const portfoliosDiv = document.getElementById("portfoliosDiv");
+            const username = location.pathname;
+
+            window.onload = (async () => {
+                const prom = await fetch(username + "/getinformation", {
+                    method: "GET"
+                });
+
+                const data = await prom.json();
+                usernameLabel.innerHTML = data.username;
+                descriptionLabel.innerHTML = data.description;
+                emailLabel.innerHTML = data.email;
+                creationdateLabel.innerHTML = data.date;
+                if (data.avatar != null)
+                    photoImg.setAttribute("src", "data:image/jpeg;base64," + data.avatar);
+                for (let portfolio of data.portfolios) {
+                    const block = document.createElement("div");
+                    block.style = "border: 2px solid white;";
+                    const portfolioName = document.createElement("a");
+                    portfolioName.style = "font-size: 30px; color: white;";
+                    portfolioName.innerHTML = portfolio.portfolioName;
+                    portfolioName.setAttribute("href", username + "/" + portfolio.portfolioName)
+                    block.appendChild(portfolioName);
+                    const br = document.createElement("br");
+                    block.appendChild(br);
+                    const description = document.createElement("label");
+                    description.innerHTML = portfolio.description;
+                    description.style ="font-size: 20px; color: white;"
+                    block.appendChild(description);
+                    const creationDate = document.createElement("h3");
+                    creationDate.style ="font-size: 20px; color: white;"
+                    creationDate.innerHTML = portfolio.creationDate;
+                    block.appendChild(creationDate);
+                    portfoliosDiv.appendChild(block);
+                }
+            });
+        </script>
+</body>
+</html>
