@@ -18,11 +18,7 @@
             <h3 style="color: white;">Повтор пароля</h3>
             <input id="passwordRepeatInput" type="password" style="background: transparent; border: 2px solid white; font-size: 20px; color: white;">
             <br><br>
-            <button id="sendButton" style="color: white; background-color: #7209de; font-size: 20px;">Получить код на почту</button>
-            <h3 style="color: white;">Код из письма</h3>
-            <input id="emailcodeInput" type="number" readonly style="background: transparent; border: 2px solid white; font-size: 20px; color: white;">
-            <br><br>
-            <button id="registerButton" hidden style="color: white; background-color: #7209de; font-size: 40px;">Зарегистрироваться</button>
+            <button id="registerButton" style="color: white; background-color: #7209de; font-size: 40px;">Зарегистрироваться</button>
             <h3 id="statusLabel" style="font-size: 20px; color: white;"></h3>
         </div>
     </div>
@@ -32,8 +28,6 @@
         const emailInput = document.getElementById("emailInput");
         const passwordInput = document.getElementById("passwordInput");
         const passwordRepeatInput = document.getElementById("passwordRepeatInput");
-        const emailcodeInput = document.getElementById("emailcodeInput");
-        const sendButton = document.getElementById("sendButton");
         const registerButton = document.getElementById("registerButton");
         const statusLabel = document.getElementById("statusLabel");
         const english = /^[A-Za-z0-9]*$/;
@@ -54,7 +48,7 @@
             return Math.floor(Math.random() * (max - min + 1) + min)
         }
 
-        sendButton.onclick = (async () => {
+        registerButton.onclick = (async () => {
             if (usernameInput.value.length > 30 || usernameInput.value.length < 4) {
                 statusLabel.innerHTML = "Имя пользователя должно содержать от 4 до 30 символов";
                 setTimeout(() => statusLabel.innerHTML = "", 3000);
@@ -87,55 +81,24 @@
 
             else {
                 const email = emailInput.value;
-                const code = randomIntFromInterval(10000, 99999).toString();
-                console.log(code);
                 const username = usernameInput.value.toLowerCase();
-                await fetch("sendemail", {
+                const password = passwordInput.value;
+                await fetch("register", {
                     method: "POST",
-                    body: JSON.stringify({
-                        email, code, username
-                    }),
+                    body: JSON.stringify({ username, email, password }),
                     headers: {
                         "Content-Type": "application/json"
                     }
-                }).then((response) => {
-                    if (!response.ok) {
+                }).then((respone) => {
+                    if (!respone.ok) {
                         statusLabel.innerHTML = "Пользователь с таким именем уже существует";
-                        setTimeout(() => statusLabel.innerHTML = "", 3000);
+                        setTimeout(() => statusLabel.innerHTML = "", 3000)
                     }
 
                     else {
-                        usernameInput.setAttribute("readonly", true);
-                        emailInput.setAttribute("readonly", true);
-                        const password = passwordInput.value;
-                        passwordInput.setAttribute("readonly", true);
-                        passwordRepeatInput.setAttribute("readonly", true);
-                        sendButton.hidden = true;
-                        emailcodeInput.removeAttribute("readonly");
-                        registerButton.hidden = false;
-                        registerButton.onclick = (async () => {
-                            if (emailcodeInput.value != code) {
-                                statusLabel.innerHTML = "Неверный код";
-                                setTimeout(() => statusLabel.innerHTML = "", 3000);
-                            }
-
-                            else {
-                                await fetch("register", {
-                                    method: "POST",
-                                    body: JSON.stringify({
-                                        username,
-                                        email,
-                                        password
-                                    }),
-                                    headers: {
-                                        "Content-Type": "application/json"
-                                    }
-                                });
-
-                                document.location.href = "/";
-                            }
-                        });
+                        window.location.href = "/";
                     }
+
                 });
             }
         });

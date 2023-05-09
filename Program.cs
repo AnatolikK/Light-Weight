@@ -45,41 +45,6 @@ namespace Project
                 }
             });
 
-            app.MapPost("/sendemail", async context =>
-            {
-                var emailData = await context.Request.ReadFromJsonAsync<EmailData>();
-                using var con = new SqlConnection(connection);
-                await con.OpenAsync();
-                var command = new SqlCommand();
-                command.Connection = con;
-                command.CommandText = "SELECT Count(*) " +
-                                      "FROM [users] " +
-                                      "WHERE username=@username";
-                command.Parameters.AddWithValue("username", emailData.Username);
-                var res = await command.ExecuteScalarAsync();
-                if ((int)res == 1)
-                    context.Response.StatusCode = 400;
-
-                else if ((int)res == 0)
-                {
-                    var message = new MailMessage("digitalportfoliolw@mail.ru", emailData!.Email)
-                    {
-                        Subject = "Код для подтверждения регистрации",
-                        Body = emailData.Code
-                    };
-
-                    var client = new SmtpClient("smtp.mail.ru", 587)
-                    {
-                        EnableSsl = true,
-                        Credentials = credentials
-                    };
-
-                    await client.SendMailAsync(message);
-                }
-
-                await con.CloseAsync();
-            });
-
             app.MapPost("/register", async context =>
             {
                 var data = await context.Request.ReadFromJsonAsync<UserData>();
@@ -87,17 +52,26 @@ namespace Project
                 await con.OpenAsync();
                 var command = new SqlCommand();
                 command.Connection = con;
-                command.CommandText = "INSERT INTO [users] (username, mail, password, creationdate) " +
-                                      "VALUES (@username, @mail, @password, @creationdate)";
                 command.Parameters.AddWithValue("username", data!.Username);
-                command.Parameters.AddWithValue("mail", data.Email);
-                command.Parameters.AddWithValue("password", data.Password);
-                command.Parameters.AddWithValue("creationdate", DateTime.Today.ToString("dd-MM-yyyy"));
-                await command.ExecuteNonQueryAsync();
-                await con.CloseAsync();
-                var claims = new List<Claim> { new Claim(ClaimTypes.NameIdentifier, data.Username) };
-                var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                await context.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identity));
+                command.CommandText = "SELECT count(*) " +
+                                      "FROM [users] " +
+                                      "WHERE username=@username";
+                var result=await command.ExecuteScalarAsync();
+                if ((int)result == 1)
+                    context.Response.StatusCode = 400;
+                else
+                {
+                    command.CommandText = "INSERT INTO [users] (username, mail, password, creationdate) " +
+                                          "VALUES (@username, @mail, @password, @creationdate)";
+                    command.Parameters.AddWithValue("mail", data.Email);
+                    command.Parameters.AddWithValue("password", data.Password);
+                    command.Parameters.AddWithValue("creationdate", DateTime.Today.ToString("dd-MM-yyyy"));
+                    await command.ExecuteNonQueryAsync();
+                    var claims = new List<Claim> { new Claim(ClaimTypes.NameIdentifier, data.Username) };
+                    var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                    await context.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identity));
+                }
+
                 await con.CloseAsync();
             });
 

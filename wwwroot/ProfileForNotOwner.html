@@ -32,7 +32,10 @@
             const emailLabel = document.getElementById("emailLabel");
             const creationdateLabel = document.getElementById("creationdateLabel");
             const portfoliosDiv = document.getElementById("portfoliosDiv");
+            const onMainButton = document.getElementById("onMainButton");
             const username = location.pathname;
+
+            onMainButton.onclick = (() => window.location.href = "/");
 
             window.onload = (async () => {
                 const prom = await fetch(username + "/getinformation", {
