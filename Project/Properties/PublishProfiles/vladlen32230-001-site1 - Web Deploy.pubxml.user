@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+This file is used by the publish/package process of your Web project. You can customize the behavior of this process
+by editing this MSBuild file. In order to learn more about this please visit https://go.microsoft.com/fwlink/?LinkID=208121. 
+-->
+<Project>
+  <PropertyGroup>
+    <TimeStampOfAssociatedLegacyPublishXmlFile />
+    <EncryptedPassword>AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAJt6hKla2AkuaB59oIQ7AigAAAAACAAAAAAAQZgAAAAEAACAAAABn4Z/o15Fq73E4mIuvGJwCi+6x9u9En5Fbixo15dGvqQAAAAAOgAAAAAIAACAAAACP/Bt/3G3Zkt3cVjjD7NR98Tv0zUs/J+V8ocjMkIYmFSAAAAB0koQDfC7crvHFnDjH44Sydb2SAY0yTCiJjkl9Nrz5xEAAAAD01N+1XwPfCfYU9gtS4HSZtQfMxShQjMJV0F9RX/ecFvGS8Er1eiTxThl8l8KA/0212wJnz06YlcmyTXCZCV2k</EncryptedPassword>
+    <History>True|2023-05-09T09:14:35.4603436Z;</History>
+    <LastFailureDetails />
+  </PropertyGroup>
+  <ItemGroup>
+    <DestinationConnectionStrings Include="dataBase">
+      <Value>Data Source=SQL8005.site4now.net%3bInitial Catalog=db_a97164_lightweightdp%3bUser Id=db_a97164_lightweightdp_admin%3bPassword=87861621Qwerty%3b</Value>
+    </DestinationConnectionStrings>
+    <DestinationConnectionStrings Include="emailPassword">
+      <Value>Data Source=SQL8005.site4now.net%3bInitial Catalog=db_a97164_lightweightdp%3bUser Id=db_a97164_lightweightdp_admin%3bPassword=87861621Qwerty%3b</Value>
+    </DestinationConnectionStrings>
+  </ItemGroup>
+</Project>
