@@ -105,7 +105,7 @@ namespace Project
                 var result = await command.ExecuteScalarAsync();
                 if ((int)result! == 1)
                 {
-                    var claims = new List<Claim> { new Claim(ClaimTypes.NameIdentifier, userData.Username) };
+                    var claims = new List<Claim> { new Claim(ClaimTypes.NameIdentifier, userData.Username.ToLower()) };
                     var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                     await context.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identity));
                 }
@@ -369,7 +369,7 @@ namespace Project
                             command.CommandText = "DELETE FROM [rating] " +
                                                   "WHERE portfolioauthor=@portfolioauthor AND nameofportfolio=@nameofportfolio AND authorname=@authorname";
                             await command.ExecuteNonQueryAsync();
-                            await context.Response.WriteAsync("Лайк убран");
+                            await context.Response.WriteAsync("Р›Р°Р№Рє СѓР±СЂР°РЅ");
                         }
 
                         else if (rate == "-")
@@ -379,7 +379,7 @@ namespace Project
                                                   "WHERE portfolioauthor=@portfolioauthor AND nameofportfolio=@nameofportfolio AND authorname=@authorname";
                             command.Parameters.AddWithValue("rated", -1);
                             await command.ExecuteNonQueryAsync();
-                            await context.Response.WriteAsync("Дизлайк поставлен");
+                            await context.Response.WriteAsync("Р”РёР·Р»Р°Р№Рє РїРѕСЃС‚Р°РІР»РµРЅ");
                         }
                     }
 
@@ -392,7 +392,7 @@ namespace Project
                                                   "WHERE portfolioauthor=@portfolioauthor AND nameofportfolio=@nameofportfolio AND authorname=@authorname";
                             command.Parameters.AddWithValue("rated", 1);
                             await command.ExecuteNonQueryAsync();
-                            await context.Response.WriteAsync("Лайк поставлен");
+                            await context.Response.WriteAsync("Р›Р°Р№Рє РїРѕСЃС‚Р°РІР»РµРЅ");
                         }
 
                         else if (rate == "-")
@@ -400,7 +400,7 @@ namespace Project
                             command.CommandText = "DELETE FROM [rating] " +
                                                   "WHERE portfolioauthor=@portfolioauthor AND nameofportfolio=@nameofportfolio AND authorname=@authorname";
                             await command.ExecuteNonQueryAsync();
-                            await context.Response.WriteAsync("Дизлайк убран");
+                            await context.Response.WriteAsync("Р”РёР·Р»Р°Р№Рє СѓР±СЂР°РЅ");
                         }
                     }
 
@@ -413,9 +413,9 @@ namespace Project
                         command.Parameters.AddWithValue("rated", rated);
                         await command.ExecuteNonQueryAsync();
                         if (rated == 1)
-                            await context.Response.WriteAsync("Лайк поставлен");
+                            await context.Response.WriteAsync("Р›Р°Р№Рє РїРѕСЃС‚Р°РІР»РµРЅ");
                         else if (rated == -1)
-                            await context.Response.WriteAsync("Дизлайк поставлен");
+                            await context.Response.WriteAsync("Р”РёР·Р»Р°Р№Рє РїРѕСЃС‚Р°РІР»РµРЅ");
                     }
 
                     await con.CloseAsync();
